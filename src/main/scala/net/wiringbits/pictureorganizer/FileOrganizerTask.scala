@@ -1,10 +1,8 @@
 package net.wiringbits.pictureorganizer
 
-import scala.util.control.NonFatal
-
 class FileOrganizerTask {
 
-  def run(inputRoot: os.Path, outputRoot: os.Path): Unit = {
+  def run(inputRoot: os.Path, outputRoot: os.Path, duplicatedRoot: os.Path, invalidRoot: os.Path): Unit = {
     println("Loading already processed files, it may take some minutes, be patient")
     val (processedFiles, invalidProcessedFiles) = FileOrganizerService.load(outputRoot)(trackProgress)
     println(s"Already processed files loaded: ${processedFiles.size}")
@@ -21,50 +19,63 @@ class FileOrganizerTask {
       println(
         s"WARNING: There are ${invalidFilesToProcess.size} files on the input folder without enough metadata to process"
       )
+      println(s"TEST: ${invalidFilesToProcess.size}")
     }
 
-    println(s"Processing now... it may take some minutes, be patient")
+    println(s"Indexing now... it may take some minutes, be patient")
     val allFiles = filesToProcess.data.keys.foldLeft(processedFiles) {
       case (acc, currentHash) =>
         acc + filesToProcess.data.getOrElse(currentHash, List.empty)
     }
 
-    val totalFiles = allFiles.data.values.map(_.size).sum
-    val uniqueFiles = allFiles.size
-    val duplicated = totalFiles - uniqueFiles
+    val (newDuplicated, newUnique) =
+      filesToProcess.data.values.foldLeft(List.empty[FileDetails] -> List.empty[FileDetails]) {
+        case ((newDuplicated, newUnique), items) =>
+          items.headOption
+            .filterNot(f => processedFiles.contains(f.hash))
+            .map { head =>
+              // current batch has a new element, pick the first one
+              (items.drop(1) ::: newDuplicated, head :: newUnique)
+            }
+            .getOrElse {
+              // current batch repeated
+              (items ::: newDuplicated, newUnique)
+            }
+      }
 
     println("Initial indexing done")
-    println(s"- Unique files: $uniqueFiles")
+    println(s"- Unique files: ${allFiles.size}")
     println(s"- Already organized files: ${processedFiles.size}")
-    println(s"- Duplicated files: $duplicated")
-    println(s"- New unique files to organize: ${uniqueFiles - processedFiles.size}")
+    println(s"- New duplicated files: ${newDuplicated.size}")
+    println(s"- New unique files to organize: ${newUnique.size}")
     println()
 
-    println("Organizing files now")
-    filesToProcess.data.keys.zipWithIndex.foreach {
-      case (hash, index) =>
-        trackProgress(current = index, total = filesToProcess.size)
-        filesToProcess.data
-          .getOrElse(hash, List.empty)
-          .headOption
-          .filterNot(f => processedFiles.contains(f.hash))
-          .foreach { file =>
-            try {
-              FileOrganizerService.organizeByDate(
-                destinationDirectory = outputRoot,
-                sourceFile = file.source,
-                createdOn = file.createdOn
-              )
-            } catch {
-              case NonFatal(ex) =>
-                println(s"Failed to organize ${file.source}, error = ${ex.getMessage}")
-            }
-          }
+    // Move duplicated files
+    println(s"Moving duplicated files to: $duplicatedRoot")
+    newDuplicated.zipWithIndex.foreach {
+      case (file, index) =>
+        trackProgress(current = index, total = newDuplicated.size)
+        FileOrganizerService.safeMove(destinationDirectory = duplicatedRoot, sourceFile = file.source)
     }
 
-    // TODO: Move duplicated files
-    // TODO: Move files without metadata
-    // TODO: Move unique files that aren't in the output directory
+    // Move files without metadata
+    println(s"Moving invalid files to: $invalidRoot")
+    invalidFilesToProcess.zipWithIndex.foreach {
+      case (file, index) =>
+        trackProgress(current = index, total = invalidFilesToProcess.size)
+        FileOrganizerService.safeMove(destinationDirectory = invalidRoot, sourceFile = file)
+    }
+
+    println(s"Organizing unique files to: $outputRoot")
+    newUnique.zipWithIndex.foreach {
+      case (file, index) =>
+        trackProgress(current = index, total = newDuplicated.size)
+        FileOrganizerService.organizeByDate(
+          destinationDirectory = duplicatedRoot,
+          sourceFile = file.source,
+          createdOn = file.createdOn
+        )
+    }
 
     println("Cleaning up empty directories")
     FileOrganizerService.cleanEmptyDirectories(inputRoot)

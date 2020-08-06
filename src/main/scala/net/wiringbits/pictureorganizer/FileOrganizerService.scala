@@ -45,7 +45,7 @@ object FileOrganizerService {
       .partition(_.isLeft)
 
     val invalid = left.flatMap(_.left.toOption)
-    val valid = right.flatMap(_.right.toOption)
+    val valid = right.flatMap(_.toOption)
     valid.foldLeft(IndexedFiles.empty)(_ + _) -> invalid.toList
   }
 
@@ -58,6 +58,11 @@ object FileOrganizerService {
     val destinationFile = getAvailablePath(parent, sourceFile.last)
     os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
     destinationFile.toIO.setLastModified(createdOn.toEpochDay)
+  }
+
+  def safeMove(destinationDirectory: os.Path, sourceFile: os.Path): Unit = {
+    val destinationFile = getAvailablePath(destinationDirectory, sourceFile.last)
+    os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
   }
 
   @tailrec

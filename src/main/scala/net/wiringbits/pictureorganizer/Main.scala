@@ -1,18 +1,22 @@
 package net.wiringbits.pictureorganizer
 
-import java.time.LocalDate
-
 import com.drew.imaging.ImageMetadataReader
 
-import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 
 object Main {
 
   def main(args: Array[String]): Unit = {
+    val invalid = os.pwd / "invalid"
+    val duplicated = os.pwd / "duplicated"
     val output = os.pwd / "output"
     val input = os.pwd / "test-data"
-    new FileOrganizerTask().run(inputRoot = input, outputRoot = output)
+    new FileOrganizerTask().run(
+      inputRoot = input,
+      outputRoot = output,
+      duplicatedRoot = duplicated,
+      invalidRoot = invalid
+    )
   }
 
   def findPotentialDate(sourceFile: os.Path): Set[String] = {
