@@ -1,4 +1,4 @@
-name := """picture-organizer"""
+name := """my-photo-timeline"""
 organization := "net.wiringbits"
 
 version := "1.0-SNAPSHOT"
