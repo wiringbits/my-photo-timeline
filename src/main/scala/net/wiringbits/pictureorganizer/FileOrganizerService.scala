@@ -53,7 +53,7 @@ object FileOrganizerService {
     val year = createdOn.getYear.toString
     val monthName = createdOn.getMonth.toString.toLowerCase
     val monthNumber = createdOn.getMonthValue
-    val month = "%2d-%s".format(monthNumber, monthName)
+    val month = "%2d-%s".format(monthNumber, monthName).replace(" ", "0")
     val parent = destinationDirectory / year / month
     val destinationFile = getAvailablePath(parent, sourceFile.last)
     os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
