@@ -71,7 +71,7 @@ class FileOrganizerTask {
       case (file, index) =>
         trackProgress(current = index, total = newDuplicated.size)
         FileOrganizerService.organizeByDate(
-          destinationDirectory = duplicatedRoot,
+          destinationDirectory = outputRoot,
           sourceFile = file.source,
           createdOn = file.createdOn
         )
