@@ -1,4 +1,4 @@
-package net.wiringbits.pictureorganizer
+package net.wiringbits.myphototimeline
 
 case class IndexedFiles(data: Map[String, List[FileDetails]]) {
 

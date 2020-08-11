@@ -1,4 +1,4 @@
-package net.wiringbits.pictureorganizer
+package net.wiringbits.myphototimeline
 
 import java.time.LocalDate
 

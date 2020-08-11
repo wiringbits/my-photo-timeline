@@ -1,8 +1,8 @@
-package net.wiringbits.pictureorganizer
+package net.wiringbits.myphototimeline
 
 import com.drew.imaging.ImageMetadataReader
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 object Main {
 
