@@ -19,7 +19,6 @@ class FileOrganizerTask {
       println(
         s"WARNING: There are ${invalidFilesToProcess.size} files on the input folder without enough metadata to process"
       )
-      println(s"TEST: ${invalidFilesToProcess.size}")
     }
 
     println(s"Indexing now... it may take some minutes, be patient")
