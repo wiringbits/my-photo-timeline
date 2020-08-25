@@ -2,7 +2,11 @@ package net.wiringbits.myphototimeline
 
 class FileOrganizerTask {
 
-  def run(inputRoot: os.Path, outputRoot: os.Path, duplicatedRoot: os.Path, invalidRoot: os.Path): Unit = {
+  def run(inputRoot: os.Path, outputBaseRoot: os.Path, dryRun: Boolean): Unit = {
+    val outputRoot = outputBaseRoot / "organized"
+    val duplicatedRoot = outputBaseRoot / "duplicated"
+    val invalidRoot = outputBaseRoot / "invalid"
+
     println("Loading already processed files, it may take some minutes, be patient")
     val (processedFiles, invalidProcessedFiles) = FileOrganizerService.load(outputRoot)(trackProgress)
     println(s"Already processed files loaded: ${processedFiles.size}")
@@ -49,36 +53,41 @@ class FileOrganizerTask {
     println(s"- New unique files to organize: ${newUnique.size}")
     println()
 
-    // Move duplicated files
-    println(s"Moving duplicated files to: $duplicatedRoot")
-    newDuplicated.zipWithIndex.foreach {
-      case (file, index) =>
-        trackProgress(current = index, total = newDuplicated.size)
-        FileOrganizerService.safeMove(destinationDirectory = duplicatedRoot, sourceFile = file.source)
+    if (dryRun) {
+      println("Files not affected because dry-run is enabled")
+    } else {
+      // Move duplicated files
+      println(s"Moving duplicated files to: $duplicatedRoot")
+      newDuplicated.zipWithIndex.foreach {
+        case (file, index) =>
+          trackProgress(current = index, total = newDuplicated.size)
+          FileOrganizerService.safeMove(destinationDirectory = duplicatedRoot, sourceFile = file.source)
+      }
+
+      // Move files without metadata
+      println(s"Moving invalid files to: $invalidRoot")
+      invalidFilesToProcess.zipWithIndex.foreach {
+        case (file, index) =>
+          trackProgress(current = index, total = invalidFilesToProcess.size)
+          FileOrganizerService.safeMove(destinationDirectory = invalidRoot, sourceFile = file)
+      }
+
+      println(s"Organizing unique files to: $outputRoot")
+      newUnique.zipWithIndex.foreach {
+        case (file, index) =>
+          trackProgress(current = index, total = newDuplicated.size)
+          FileOrganizerService.organizeByDate(
+            destinationDirectory = outputRoot,
+            sourceFile = file.source,
+            createdOn = file.createdOn
+          )
+      }
+
+      println("Cleaning up empty directories")
+      FileOrganizerService.cleanEmptyDirectories(inputRoot)
+      FileOrganizerService.cleanEmptyDirectories(outputRoot)
     }
 
-    // Move files without metadata
-    println(s"Moving invalid files to: $invalidRoot")
-    invalidFilesToProcess.zipWithIndex.foreach {
-      case (file, index) =>
-        trackProgress(current = index, total = invalidFilesToProcess.size)
-        FileOrganizerService.safeMove(destinationDirectory = invalidRoot, sourceFile = file)
-    }
-
-    println(s"Organizing unique files to: $outputRoot")
-    newUnique.zipWithIndex.foreach {
-      case (file, index) =>
-        trackProgress(current = index, total = newDuplicated.size)
-        FileOrganizerService.organizeByDate(
-          destinationDirectory = outputRoot,
-          sourceFile = file.source,
-          createdOn = file.createdOn
-        )
-    }
-
-    println("Cleaning up empty directories")
-    FileOrganizerService.cleanEmptyDirectories(inputRoot)
-    FileOrganizerService.cleanEmptyDirectories(outputRoot)
     println("Done")
   }
 

@@ -1,42 +1,27 @@
 package net.wiringbits.myphototimeline
 
+import cats.implicits._
 import com.drew.imaging.ImageMetadataReader
+import com.monovore.decline._
+import java.nio.file.Path
+
+import cats.data.Validated
 
 import scala.jdk.CollectionConverters.IterableHasAsScala
 
-object Main {
+import CommandAppHelper._
 
-  def main(args: Array[String]): Unit = {
-    val invalid = os.pwd / "invalid"
-    val duplicated = os.pwd / "duplicated"
-    val output = os.pwd / "output"
-    val input = os.pwd / "test-data"
-    new FileOrganizerTask().run(
-      inputRoot = input,
-      outputRoot = output,
-      duplicatedRoot = duplicated,
-      invalidRoot = invalid
+object Main
+    extends CommandApp(
+      name = "my-photo-timeline",
+      header = "My Photo Timeline",
+      main = {
+        val dryRunOpt = Opts
+          .flag("dry-run", help = "Print the actions to do without changing anything (recommended).")
+          .orFalse
+
+        (sourceOpt, outputOpt, dryRunOpt).mapN { (source, output, dryRun) =>
+          run(source = source, output = output, dryRun = dryRun)
+        }
+      }
     )
-  }
-
-  def findPotentialDate(sourceFile: os.Path): Set[String] = {
-    def f = {
-      val metadata = ImageMetadataReader.readMetadata(sourceFile.toIO)
-      metadata.getDirectories.asScala.flatMap { d =>
-        d.getTags.asScala
-          .filterNot { t =>
-            MetadataCreatedOnTag.names.contains(t.getTagName.toLowerCase)
-          }
-          .filter(_.getTagName.toLowerCase.contains("date"))
-          .map { t =>
-            t.getTagName
-          }
-      }.toSet
-    }
-
-    try f
-    catch {
-      case _: Throwable => Set.empty
-    }
-  }
-}
