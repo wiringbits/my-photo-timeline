@@ -64,7 +64,8 @@ object CommandAppHelper {
 
   def run(source: os.Path, output: os.Path, dryRun: Boolean): Unit = {
     val args = FileOrganizerTask.Arguments(inputRoot = source, outputBaseRoot = output, dryRun = dryRun)
-    new FileOrganizerTask().run(args)
+    val logger = new SimpleLogger
+    new FileOrganizerTask(logger).run(args)
   }
 
   def findPotentialDate(sourceFile: os.Path): Set[String] = {

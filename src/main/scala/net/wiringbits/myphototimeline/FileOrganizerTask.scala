@@ -15,32 +15,32 @@ object FileOrganizerTask {
   }
 }
 
-class FileOrganizerTask {
+class FileOrganizerTask(logger: SimpleLogger) {
 
   import FileOrganizerTask._
 
   def run(args: Arguments): Unit = {
     validate(args)
 
-    println("Loading already processed files, it may take some minutes, be patient")
+    logger.info("Loading already processed files, it may take some minutes, be patient")
     val (processedFiles, invalidProcessedFiles) = FileOrganizerService.load(args.outputRoot)(trackProgress)
-    println(s"Already processed files loaded: ${processedFiles.size}")
+    logger.info(s"Already processed files loaded: ${processedFiles.size}")
     if (invalidProcessedFiles.nonEmpty) {
-      println(
-        s"WARNING: There are ${invalidProcessedFiles.size} files on the output folder without enough metadata to process, which you need to organize manually"
+      logger.warn(
+        s"There are ${invalidProcessedFiles.size} files on the output folder without enough metadata to process, which you need to organize manually"
       )
     }
 
-    println("Loading files to process, it may take some minutes, be patient")
+    logger.info("Loading files to process, it may take some minutes, be patient")
     val (filesToProcess, invalidFilesToProcess) = FileOrganizerService.load(args.inputRoot)(trackProgress)
-    println(s"Files to process loaded: ${filesToProcess.size}")
+    logger.info(s"Files to process loaded: ${filesToProcess.size}")
     if (invalidFilesToProcess.nonEmpty) {
-      println(
-        s"WARNING: There are ${invalidFilesToProcess.size} files on the input folder without enough metadata to process"
+      logger.warn(
+        s"There are ${invalidFilesToProcess.size} files on the input folder without enough metadata to process"
       )
     }
 
-    println(s"Indexing now... it may take some minutes, be patient")
+    logger.info(s"Indexing now... it may take some minutes, be patient")
     val allFiles = filesToProcess.data.keys.foldLeft(processedFiles) {
       case (acc, currentHash) =>
         acc + filesToProcess.data.getOrElse(currentHash, List.empty)
@@ -61,18 +61,18 @@ class FileOrganizerTask {
             }
       }
 
-    println("Initial indexing done")
-    println(s"- Unique files: ${allFiles.size}")
-    println(s"- Already organized files: ${processedFiles.size}")
-    println(s"- New duplicated files: ${newDuplicated.size}")
-    println(s"- New unique files to organize: ${newUnique.size}")
-    println()
+    logger.info("Initial indexing done")
+    logger.info(s"- Unique files: ${allFiles.size}")
+    logger.info(s"- Already organized files: ${processedFiles.size}")
+    logger.info(s"- New duplicated files: ${newDuplicated.size}")
+    logger.info(s"- New unique files to organize: ${newUnique.size}")
+    logger.info("")
 
     if (args.dryRun) {
-      println("Files not affected because dry-run is enabled")
+      logger.info("Files not affected because dry-run is enabled")
     } else {
       // Move duplicated files
-      println(s"Moving duplicated files to: ${args.duplicatedRoot}")
+      logger.info(s"Moving duplicated files to: ${args.duplicatedRoot}")
       newDuplicated.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = newDuplicated.size)
@@ -80,14 +80,14 @@ class FileOrganizerTask {
       }
 
       // Move files without metadata
-      println(s"Moving invalid files to: ${args.invalidRoot}")
+      logger.info(s"Moving invalid files to: ${args.invalidRoot}")
       invalidFilesToProcess.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = invalidFilesToProcess.size)
           FileOrganizerService.safeMove(destinationDirectory = args.invalidRoot, sourceFile = file)
       }
 
-      println(s"Organizing unique files to: ${args.outputRoot}")
+      logger.info(s"Organizing unique files to: ${args.outputRoot}")
       newUnique.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = newDuplicated.size)
@@ -98,12 +98,12 @@ class FileOrganizerTask {
           )
       }
 
-      println("Cleaning up empty directories")
+      logger.info("Cleaning up empty directories")
       FileOrganizerService.cleanEmptyDirectories(args.inputRoot)
       FileOrganizerService.cleanEmptyDirectories(args.outputRoot)
     }
 
-    println("Done")
+    logger.info("Done")
   }
 
   private def trackProgress(current: Int, total: Int): Unit = {
@@ -114,13 +114,13 @@ class FileOrganizerTask {
       val currentPercent = percent(current)
       val previous = percent(current - 1)
       if (currentPercent > previous && currentPercent % 5 == 0) {
-        println(s"Progress: $currentPercent%")
+        logger.info(fansi.Color.Blue(s"Progress: $currentPercent%").render)
       }
     }
   }
 
   private def exit(msg: String): Unit = {
-    println(s"FATAL: $msg")
+    logger.fatal(s"FATAL: $msg")
     sys.exit(1)
   }
 
