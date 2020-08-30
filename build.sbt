@@ -4,7 +4,13 @@ scalaVersion := "2.13.3"
 
 fork in Test := true
 
-enablePlugins(GitVersioning)
+lazy val root = (project in file("."))
+  .enablePlugins(GitVersioning, BuildInfoPlugin)
+  .settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, git.baseVersion, git.gitHeadCommit),
+    buildInfoPackage := "net.wiringbits.myphototimeline",
+    buildInfoUsePackageAsPath := true
+  )
 
 val bouncycastle = "1.62"
 
