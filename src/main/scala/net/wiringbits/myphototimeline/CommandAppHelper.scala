@@ -10,6 +10,16 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 
 object CommandAppHelper {
 
+  val appName: String = BuildInfo.name
+
+  val appDescription: String = {
+    s"""
+      |My Photo Timeline
+      |
+      |Version: ${BuildInfo.version}
+      |Git head: ${BuildInfo.gitHeadCommit.getOrElse("none")}""".stripMargin
+  }
+
   val sourceOpt: Opts[os.Path] = Opts
     .option[Path](
       long = "source",
