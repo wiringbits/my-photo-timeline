@@ -1,11 +1,10 @@
 name := """my-photo-timeline"""
 organization := "net.wiringbits"
-
-version := "1.0-SNAPSHOT"
-
 scalaVersion := "2.13.3"
 
 fork in Test := true
+
+enablePlugins(GitVersioning)
 
 val bouncycastle = "1.62"
 
