@@ -1,0 +1,41 @@
+name: Native Image
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  release:
+    types: [published]
+jobs:
+  native-image:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macOS-latest, ubuntu-latest]
+        include:
+          - os: macOS-latest
+            artifact: my-photo-timeline-x86_64-apple-darwin
+            binary: target/native-image/my-photo-timeline
+          - os: ubuntu-latest
+            artifact: my-photo-timeline-x86_64-pc-linux
+            binary: target/native-image/my-photo-timeline
+    steps:
+      - uses: actions/checkout@v2
+      - uses: olafurpg/setup-scala@v6
+      - run: git fetch --tags || true
+      - run: sbt nativeImage
+      - uses: actions/upload-artifact@master
+        with:
+          path: ${{ matrix.binary }}
+          name: ${{ matrix.artifact }}
+      - name: Upload release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ matrix.binary }}
+          asset_name: ${{ matrix.artifact }}
+          asset_content_type: application/zip
