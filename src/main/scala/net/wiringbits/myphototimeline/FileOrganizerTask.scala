@@ -104,6 +104,22 @@ class FileOrganizerTask(logger: SimpleLogger) {
     }
 
     logger.info("Done")
+
+    if (args.dryRun) {
+      logger.info("Remember to remove the --dry-run option to actually organize the photos")
+    } else {
+      val text =
+        """
+          |I hope you found the app useful.
+          |
+          |When I was looking for one, I was willing to pay $100 USD for it but found nothing fulfilling my needs.
+          |any donations are welcome:
+          |- Bitcoin: bc1qf37j0wutmn9ngkpn8v7mknukn3f0cmvq3p7dzf
+          |- Ethereum: 0x02D1f6b4992fD147F19525150b97509D2eaAa651
+          |- Litecoin: LWYPqEYG6fQdvCWCKWvFygskNTptqxuUHu
+          |""".stripMargin
+      logger.info(text)
+    }
   }
 
   private def trackProgress(current: Int, total: Int): Unit = {
@@ -120,7 +136,7 @@ class FileOrganizerTask(logger: SimpleLogger) {
   }
 
   private def exit(msg: String): Unit = {
-    logger.fatal(s"FATAL: $msg")
+    logger.fatal(msg)
     sys.exit(1)
   }
 

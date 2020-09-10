@@ -12,5 +12,8 @@ class SimpleLogger {
 
   def fatal(msg: String): Unit = {
     System.err.println(s"${fansi.Color.Red("FATAL")}: $msg")
+    System.err.println(
+      "Please report this problem so that it gets fixed: https://github.com/wiringbits/my-photo-timeline/issues"
+    )
   }
 }
