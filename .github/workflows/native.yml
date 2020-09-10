@@ -7,28 +7,40 @@ on:
   release:
     types: [published]
 jobs:
-  native-image:
+  unix:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [macOS-latest, ubuntu-latest]
+        os: [macOS-latest, ubuntu-latest, windows-latest]
         include:
           - os: macOS-latest
-            artifact: my-photo-timeline-x86_64-apple-darwin
-            binary: target/native-image/my-photo-timeline
+            uploaded_filename: my-photo-timeline-x86_64-apple-darwin
+            local_path: target/native-image/my-photo-timeline
           - os: ubuntu-latest
-            artifact: my-photo-timeline-x86_64-pc-linux
-            binary: target/native-image/my-photo-timeline
+            uploaded_filename: my-photo-timeline-x86_64-pc-linux
+            local_path: target/native-image/my-photo-timeline
+          - os: windows-latest
+            uploaded_filename: my-photo-timeline-x86_64-pc-win32.exe
+            local_path: target\native-image\my-photo-timeline.exe
     steps:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v6
       - run: git fetch --tags || true
       - run: sbt nativeImage
+        shell: bash
+        if: ${{ matrix.os != 'windows-latest' }}
+      - run: echo $(pwd)
+        shell: bash
+      - name: sbt test
+        shell: cmd
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: >-
+          "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && sbt nativeImage
       - uses: actions/upload-artifact@master
         with:
-          path: ${{ matrix.binary }}
-          name: ${{ matrix.artifact }}
+          path: ${{ matrix.local_path }}
+          name: ${{ matrix.uploaded_filename }}
       - name: Upload release
         if: github.event_name == 'release'
         uses: actions/upload-release-asset@v1.0.1
@@ -36,6 +48,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ matrix.binary }}
-          asset_name: ${{ matrix.artifact }}
+          asset_path: ${{ matrix.local_path }}
+          asset_name: ${{ matrix.uploaded_filename }}
           asset_content_type: application/zip
