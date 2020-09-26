@@ -1,3 +1,28 @@
+import java.io.File
+import java.nio.file.{Files, StandardCopyOption}
+
+import sbt.TupleSyntax.t2ToTable2
+
+val copyNativeImageEtc = taskKey[Unit]("Copy native-image configurations to target")
+
+copyNativeImageEtc := ((baseDirectory, target) map { (base, trg) =>
+  {
+    Some(new File(trg, "native-image/etc").toPath)
+      .filterNot(p => Files.isDirectory(p))
+      .foreach(p => Files.createDirectories(p))
+    new File(base, "etc")
+      .listFiles()
+      .foreach(
+        file =>
+          Files.copy(
+            file.toPath,
+            new File(trg, s"native-image/etc/${file.getName}").toPath,
+            StandardCopyOption.REPLACE_EXISTING
+          )
+      )
+  }
+}).value
+
 lazy val root = (project in file("."))
   .enablePlugins(GitVersioning, BuildInfoPlugin, NativeImagePlugin)
   .settings(
@@ -16,5 +41,15 @@ lazy val root = (project in file("."))
       "com.monovore" %% "decline" % "1.0.0"
     ),
     Compile / mainClass := Some("net.wiringbits.myphototimeline.Main"),
-    nativeImageOptions ++= List("--no-fallback")
+    nativeImageOptions ++= List(
+      "--no-fallback",
+      "-H:+AddAllCharsets"
+    ),
+    // To generate this file, run "sbt console",
+    // and then, "net.wiringbits.myphototimeline.util.GenerateNativeReflectionConfig.metadataExtractorReflectConfig"
+    // Paste the output to the file specified below
+    nativeImageOptions ++= List(
+      "-H:ReflectionConfigurationFiles=etc/metadata-extractor-reflect-config.json"
+    ),
+    nativeImage := (nativeImage dependsOn copyNativeImageEtc).value
   )
