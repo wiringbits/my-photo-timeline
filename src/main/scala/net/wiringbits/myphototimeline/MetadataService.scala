@@ -6,9 +6,8 @@ import com.drew.imaging.ImageMetadataReader
 
 import scala.jdk.CollectionConverters._
 
-object MetadataCreatedOnTag {
-  private val regex = """(\d\d\d\d).(\d\d).(\d\d).*""".r
-  private val filenameRegex = """(\d\d\d\d)(\d\d)(\d\d)\D.*""".r
+class MetadataService(implicit logger: SimpleLogger) {
+  import MetadataService._
 
   def getCreationDateFromFilename(sourceFile: os.Path): Option[LocalDate] = {
     def f = {
@@ -20,9 +19,18 @@ object MetadataCreatedOnTag {
       }
     }
 
-    try f
-    catch {
-      case _: Throwable => None
+    try {
+      val result = f
+      result match {
+        case Some(value) => logger.debug(s"Creation date from filename found on $sourceFile, value = $value")
+        case None => logger.debug(s"Creation date from filename not found on $sourceFile")
+      }
+
+      result
+    } catch {
+      case ex: Throwable =>
+        logger.debug(s"Failed to find creation date from filename on $sourceFile", ex)
+        None
     }
   }
 
@@ -32,11 +40,11 @@ object MetadataCreatedOnTag {
       val dates = metadata.getDirectories.asScala.flatMap { d =>
         d.getTags.asScala
           .filter { t =>
-            MetadataCreatedOnTag.names.contains(t.getTagName.toLowerCase)
+            potentialMetadataKeys.contains(t.getTagName.toLowerCase)
           }
           .map(_.getDescription)
           .flatMap(Option.apply)
-          .flatMap(MetadataCreatedOnTag.toDate)
+          .flatMap(toDate)
       }.toList
 
       dates.headOption
@@ -44,27 +52,54 @@ object MetadataCreatedOnTag {
 
     val result = try f
     catch {
-      case _: Throwable => None
+      case ex: Throwable =>
+        logger.debug(s"Failed to find metadata date from filename on $sourceFile", ex)
+        None
     }
 
-    result.orElse(getCreationDateFromFilename(sourceFile))
+    result match {
+      case Some(value) =>
+        logger.debug(s"Creation date found on metadata from filename found on $sourceFile, value = $value")
+        Some(value)
+      case None =>
+        logger.debug(
+          s"Creation date on metadata not found on $sourceFile, falling back to a potential date on the filename"
+        )
+        getCreationDateFromFilename(sourceFile)
+    }
   }
 
   def toDate(str: String): Option[LocalDate] = {
     def f = {
       str match {
-        case MetadataCreatedOnTag.regex(year, month, day) =>
+        case regex(year, month, day) =>
           val date = LocalDate.of(year.toInt, month.toInt, day.toInt)
           Some(date)
         case _ => None
       }
     }
 
-    try f
-    catch {
-      case _: Throwable => None
+    try {
+      val result = f
+      result match {
+        case Some(value) =>
+          logger.debug(s"""Date parsed properly, date = $value, from: $str""")
+        case None =>
+          logger.debug(s"""Unable to parse date from: $str""")
+      }
+      result
+    } catch {
+      case ex: Throwable =>
+        logger.debug(s"Failed to parse date from: $str", ex)
+        None
     }
   }
+}
+
+object MetadataService {
+
+  private val regex = """(\d\d\d\d).(\d\d).(\d\d).*""".r
+  private val filenameRegex = """(\d\d\d\d)(\d\d)(\d\d)\D.*""".r
 
   //    val knownTags = List(
   //      "Date/Time", // 2014:08:31 14:31:24
@@ -76,7 +111,7 @@ object MetadataCreatedOnTag {
   //      "Digital Date Created" // 2015:06:27
   //      Creation Date - 2020-04-14T17:31:57-0600
   //    )
-  val names = List(
+  val potentialMetadataKeys: List[String] = List(
     "Date/Time",
     "Date/Time Original",
     "Date/Time Digitized",

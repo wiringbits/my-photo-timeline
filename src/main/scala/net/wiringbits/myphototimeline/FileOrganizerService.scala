@@ -7,7 +7,7 @@ import com.google.common.io.Files
 
 import scala.annotation.tailrec
 
-object FileOrganizerService {
+class FileOrganizerService(metadataService: MetadataService)(implicit logger: SimpleLogger) {
 
   def computeHash(source: os.Path): String = {
     Files.asByteSource(source.toIO).hash(Hashing.sha256()).toString
@@ -33,7 +33,7 @@ object FileOrganizerService {
         case (sourceFile, index) =>
           trackProgress(index, total)
 
-          MetadataCreatedOnTag
+          metadataService
             .getCreationDate(sourceFile)
             .map { createdOn =>
               val hash = computeHash(sourceFile)
@@ -66,7 +66,7 @@ object FileOrganizerService {
   }
 
   @tailrec
-  def getAvailablePath(parent: os.Path, name: String, suffix: Int = 0): os.Path = {
+  private def getAvailablePath(parent: os.Path, name: String, suffix: Int = 0): os.Path = {
     val actualName = if (suffix == 0) name else s"${name}_($suffix)"
     val path = parent / actualName
 

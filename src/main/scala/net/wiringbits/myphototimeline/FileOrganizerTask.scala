@@ -1,7 +1,7 @@
 package net.wiringbits.myphototimeline
 
 object FileOrganizerTask {
-  case class Arguments(inputRoot: os.Path, outputBaseRoot: os.Path, dryRun: Boolean) {
+  case class Arguments(inputRoot: os.Path, outputBaseRoot: os.Path, dryRun: Boolean, debug: Boolean) {
     val outputRoot: os.Path = outputBaseRoot / "organized"
     val duplicatedRoot: os.Path = outputBaseRoot / "duplicated"
     val invalidRoot: os.Path = outputBaseRoot / "invalid"
@@ -15,15 +15,17 @@ object FileOrganizerTask {
   }
 }
 
-class FileOrganizerTask(logger: SimpleLogger) {
+class FileOrganizerTask(fileOrganizerService: FileOrganizerService)(implicit logger: SimpleLogger) {
 
   import FileOrganizerTask._
 
   def run(args: Arguments): Unit = {
     validate(args)
 
+    logger.debug("Debug mode enabled\n")
+
     logger.info("Loading already processed files, it may take some minutes, be patient")
-    val (processedFiles, invalidProcessedFiles) = FileOrganizerService.load(args.outputRoot)(trackProgress)
+    val (processedFiles, invalidProcessedFiles) = fileOrganizerService.load(args.outputRoot)(trackProgress)
     logger.info(s"Already processed files loaded: ${processedFiles.size}")
     if (invalidProcessedFiles.nonEmpty) {
       logger.warn(
@@ -32,7 +34,7 @@ class FileOrganizerTask(logger: SimpleLogger) {
     }
 
     logger.info("Loading files to process, it may take some minutes, be patient")
-    val (filesToProcess, invalidFilesToProcess) = FileOrganizerService.load(args.inputRoot)(trackProgress)
+    val (filesToProcess, invalidFilesToProcess) = fileOrganizerService.load(args.inputRoot)(trackProgress)
     logger.info(s"Files to process loaded: ${filesToProcess.size}")
     if (invalidFilesToProcess.nonEmpty) {
       logger.warn(
@@ -76,7 +78,7 @@ class FileOrganizerTask(logger: SimpleLogger) {
       newDuplicated.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = newDuplicated.size)
-          FileOrganizerService.safeMove(destinationDirectory = args.duplicatedRoot, sourceFile = file.source)
+          fileOrganizerService.safeMove(destinationDirectory = args.duplicatedRoot, sourceFile = file.source)
       }
 
       // Move files without metadata
@@ -84,14 +86,14 @@ class FileOrganizerTask(logger: SimpleLogger) {
       invalidFilesToProcess.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = invalidFilesToProcess.size)
-          FileOrganizerService.safeMove(destinationDirectory = args.invalidRoot, sourceFile = file)
+          fileOrganizerService.safeMove(destinationDirectory = args.invalidRoot, sourceFile = file)
       }
 
       logger.info(s"Organizing unique files to: ${args.outputRoot}")
       newUnique.zipWithIndex.foreach {
         case (file, index) =>
           trackProgress(current = index, total = newDuplicated.size)
-          FileOrganizerService.organizeByDate(
+          fileOrganizerService.organizeByDate(
             destinationDirectory = args.outputRoot,
             sourceFile = file.source,
             createdOn = file.createdOn
@@ -99,12 +101,22 @@ class FileOrganizerTask(logger: SimpleLogger) {
       }
 
       logger.info("Cleaning up empty directories")
-      FileOrganizerService.cleanEmptyDirectories(args.inputRoot)
-      FileOrganizerService.cleanEmptyDirectories(args.outputRoot)
+      fileOrganizerService.cleanEmptyDirectories(args.inputRoot)
+      fileOrganizerService.cleanEmptyDirectories(args.outputRoot)
     }
 
     logger.info("Done")
 
+    if (logger.isDebugEnabled) {
+      logger.debug(
+        """
+           |Given that you are running in debug mode
+           |It is likely that you are finding unexpected behavior.
+           |
+           |Feel free to copy the output to create an issue so that we can investigate and fix:
+           |- https://github.com/wiringbits/my-photo-timeline/issues/new"""
+      )
+    }
     if (args.dryRun) {
       logger.info("Remember to remove the --dry-run option to actually organize the photos")
     } else {

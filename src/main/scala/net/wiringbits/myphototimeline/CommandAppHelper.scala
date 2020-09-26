@@ -101,10 +101,14 @@ object CommandAppHelper {
       }
     }
 
-  def run(source: os.Path, output: os.Path, dryRun: Boolean): Unit = {
-    val args = FileOrganizerTask.Arguments(inputRoot = source, outputBaseRoot = output, dryRun = dryRun)
-    val logger = new SimpleLogger
-    new FileOrganizerTask(logger).run(args)
+  def run(source: os.Path, output: os.Path, dryRun: Boolean, debug: Boolean): Unit = {
+    val args = FileOrganizerTask.Arguments(inputRoot = source, outputBaseRoot = output, dryRun = dryRun, debug = debug)
+    val logLevel = if (debug) SimpleLogger.LogLevel.Debug else SimpleLogger.LogLevel.Info
+    implicit val logger = new SimpleLogger(logLevel)
+
+    val metadataService = new MetadataService
+    val fileOrganizerService = new FileOrganizerService(metadataService)
+    new FileOrganizerTask(fileOrganizerService).run(args)
   }
 
   def findPotentialDate(sourceFile: os.Path): Set[String] = {
@@ -113,9 +117,10 @@ object CommandAppHelper {
       metadata.getDirectories.asScala.flatMap { d =>
         d.getTags.asScala
           .filterNot { t =>
-            MetadataCreatedOnTag.names.contains(t.getTagName.toLowerCase)
+            // ignore the already used metadata keys
+            MetadataService.potentialMetadataKeys.contains(t.getTagName.toLowerCase)
           }
-          .filter(_.getTagName.toLowerCase.contains("date"))
+          .filter(_.getTagName.toLowerCase.contains("date")) // find potential keys including the "date" term
           .map { t =>
             t.getTagName
           }

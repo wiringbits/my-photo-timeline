@@ -13,8 +13,16 @@ object Main
           .flag("dry-run", help = "Print the actions to do without changing anything (recommended).")
           .orFalse
 
-        (sourceOpt, outputOpt, dryRunOpt).mapN { (source, output, dryRun) =>
-          run(source = source, output = output, dryRun = dryRun)
+        val debugOpt = Opts
+          .flag(
+            "debug",
+            help =
+              "Print noisy debug logs to diagnose potential bugs (recommended if you feel the app doesn't work as expected)."
+          )
+          .orFalse
+
+        (sourceOpt, outputOpt, dryRunOpt, debugOpt).mapN { (source, output, dryRun, debug) =>
+          run(source = source, output = output, dryRun = dryRun, debug = debug)
         }
       }
     )
