@@ -53,5 +53,21 @@ Where:
 ## How?
 The source directory is analyzed recursively to find all files including the proper creation date metadata, the duplicate detection uses a SHA-256 to speed up the comparison process.
 
-currently, we look into several potential metadata tags, which could even organize some video files, but such feature is not supported properly yet.
+Currently, the app looks into several potential metadata tags, which could even organize some video files, but such feature is not supported properly yet, when the metadata is not available, the app tries to get the creation date from the filename (yyyymmdd...).
 
+## Development
+You will need to install [sbt](https://www.scala-sbt.org/), [IntelliJ](https://www.jetbrains.com/idea/) is the recommended IDE, be sure to setup your IntelliJ to format the code with [scalafmt](https://scalameta.org/scalafmt/docs/installation.html#intellij) to keep the code consistent.
+
+### Compile
+Just run `sbt compile` to compile the app.
+
+### Test
+To test manually, you can launch the sbt interactive console with `sbt`, and then, run commands there with `run --dry-run --source /home/dell/projects/mine/photo-organizer/test-data --output /home/dell/projects/mine/photo-organizer/output` (replace the directories).
+
+### Native package
+Package the native image with `sbt nativeImage`, which you can try by running `target/native-image/my-photo-timeline` (append `.exe` if you are on Windows).
+
+## Troubleshooting
+There may be images with proper metadata that aren't being organized, the recommended way to fix the issue is to isolate those images, and use the `--debug` flag while running the app (lookg for the `Failed to find metadata` pattern), you can take the output to [create an issue](https://github.com/wiringbits/my-photo-timeline/issues/new) so that we can fix the bug.
+ 
+Another way is to run the app without the native image to see if you see the same effect, it is very likely that the issue relates to underlying libraries using reflection to invoke classes that aren't in the native build.
