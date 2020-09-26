@@ -46,8 +46,10 @@ lazy val root = (project in file("."))
       "-H:+AddAllCharsets"
     ),
     // To generate this file, run "sbt console",
-    // and then, "net.wiringbits.myphototimeline.util.GenerateNativeReflectionConfig.metadataExtractorReflectConfig"
-    // Paste the output to the file specified below
+    // and then, "net.wiringbits.myphototimeline.util.GenerateNativeReflectionConfig.generateConfigFile()"
+    // That's enough to regenerated the config file.
+    //
+    // TODO: Generate such config automatically before building the native image
     nativeImageOptions ++= List(
       "-H:ReflectionConfigurationFiles=etc/metadata-extractor-reflect-config.json"
     ),

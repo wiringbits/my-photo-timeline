@@ -1215,7 +1215,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifBoxHandler",
+    "name": "com.drew.metadata.helf.HeifBoxHandler",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1224,7 +1224,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifBoxTypes",
+    "name": "com.drew.metadata.helf.HeifBoxTypes",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1233,7 +1233,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifContainerTypes",
+    "name": "com.drew.metadata.helf.HeifContainerTypes",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1242,7 +1242,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifDescriptor",
+    "name": "com.drew.metadata.helf.HeifDescriptor",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1251,7 +1251,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifDirectory",
+    "name": "com.drew.metadata.helf.HeifDirectory",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1260,7 +1260,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifHandlerFactory",
+    "name": "com.drew.metadata.helf.HeifHandlerFactory",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1269,7 +1269,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifItemTypes",
+    "name": "com.drew.metadata.helf.HeifItemTypes",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1278,7 +1278,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.HeifPictureHandler",
+    "name": "com.drew.metadata.helf.HeifPictureHandler",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1287,7 +1287,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.AuxiliaryTypeProperty",
+    "name": "com.drew.metadata.helf.boxes.AuxiliaryTypeProperty",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1296,7 +1296,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.Box",
+    "name": "com.drew.metadata.helf.boxes.Box",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1305,7 +1305,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ColourInformationBox",
+    "name": "com.drew.metadata.helf.boxes.ColourInformationBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1314,7 +1314,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.FileTypeBox",
+    "name": "com.drew.metadata.helf.boxes.FileTypeBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1323,7 +1323,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.FullBox",
+    "name": "com.drew.metadata.helf.boxes.FullBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1332,7 +1332,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.HandlerBox",
+    "name": "com.drew.metadata.helf.boxes.HandlerBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1341,7 +1341,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ImageRotationBox",
+    "name": "com.drew.metadata.helf.boxes.ImageRotationBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1350,7 +1350,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ImageSpatialExtentsProperty",
+    "name": "com.drew.metadata.helf.boxes.ImageSpatialExtentsProperty",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1359,7 +1359,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ItemInfoBox",
+    "name": "com.drew.metadata.helf.boxes.ItemInfoBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1368,7 +1368,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ItemLocationBox",
+    "name": "com.drew.metadata.helf.boxes.ItemLocationBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1377,7 +1377,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.ItemProtectionBox",
+    "name": "com.drew.metadata.helf.boxes.ItemProtectionBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1386,7 +1386,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.PixelInformationBox",
+    "name": "com.drew.metadata.helf.boxes.PixelInformationBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
@@ -1395,7 +1395,7 @@
     "allPublicClasses": true
   },
   {
-    "name": "com.drew.metadata.heif.boxes.PrimaryItemBox",
+    "name": "com.drew.metadata.helf.boxes.PrimaryItemBox",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
     "allDeclaredMethods": true,
