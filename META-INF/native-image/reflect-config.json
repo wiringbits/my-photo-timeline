@@ -1,0 +1,73 @@
+[
+  {
+    "name": "com.drew.metadata.exif.ExifIFD0Directory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.drew.metadata.exif.ExifInteropDirectory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.drew.metadata.exif.ExifSubIFDDirectory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.drew.metadata.exif.ExifThumbnailDirectory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "com.drew.metadata.exif.makernotes.AppleMakernoteDirectory",
+    "methods": [
+      {
+        "name": "<init>",
+        "parameterTypes": []
+      }
+    ]
+  },
+  {
+    "name": "fansi.Attr[]"
+  },
+  {
+    "name": "fansi.Category[]"
+  },
+  {
+    "name": "java.lang.Object[][]"
+  },
+  {
+    "name": "java.lang.Throwable",
+    "methods": [
+      {
+        "name": "addSuppressed",
+        "parameterTypes": [
+          "java.lang.Throwable"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "java.lang.invoke.VarHandle"
+  },
+  {
+    "name": "os.Path[]"
+  }
+]
