@@ -11,7 +11,7 @@ object GenerateNativeReflectionConfig {
 
   def generateConfigFile(): Unit = {
     val string = metadataExtractorReflectConfig
-    new java.io.PrintWriter("etc/metadata-extractor-reflect-config.json") { write(string); close() }
+    new java.io.PrintWriter("META-INF/native-image/metadata-extractor-reflect-config.json") { write(string); close() }
   }
 
   def metadataExtractorReflectConfig: String = {
