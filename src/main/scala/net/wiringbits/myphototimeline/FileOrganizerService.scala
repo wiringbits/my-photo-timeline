@@ -55,23 +55,23 @@ class FileOrganizerService(metadataService: MetadataService)(implicit logger: Si
     val monthNumber = createdOn.getMonthValue
     val month = "%2d-%s".format(monthNumber, monthName).replace(" ", "0")
     val parent = destinationDirectory / year / month
-    val destinationFile = getAvailablePath(parent, sourceFile.last)
+    val destinationFile = getAvailablePath(parent, sourceFile.baseName, sourceFile.ext)
     os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
     destinationFile.toIO.setLastModified(createdOn.toEpochDay)
   }
 
   def safeMove(destinationDirectory: os.Path, sourceFile: os.Path): Unit = {
-    val destinationFile = getAvailablePath(destinationDirectory, sourceFile.last)
+    val destinationFile = getAvailablePath(destinationDirectory, sourceFile.baseName, sourceFile.ext)
     os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
   }
 
   @tailrec
-  private def getAvailablePath(parent: os.Path, name: String, suffix: Int = 0): os.Path = {
-    val actualName = if (suffix == 0) name else s"${name}_($suffix)"
+  private def getAvailablePath(parent: os.Path, baseName: String, ext: String, suffix: Int = 0): os.Path = {
+    val actualName = if (suffix == 0) s"${baseName}.${ext}" else s"${baseName}_($suffix).${ext}"
     val path = parent / actualName
-
+    
     if (os.exists(path)) {
-      getAvailablePath(parent, name, suffix + 1)
+      getAvailablePath(parent, baseName, ext, suffix + 1)
     } else {
       path
     }
