@@ -67,8 +67,20 @@ class FileOrganizerService(metadataService: MetadataService)(implicit logger: Si
 
   @tailrec
   private def getAvailablePath(parent: os.Path, name: String, suffix: Int = 0): os.Path = {
-    val actualName = if (suffix == 0) name else s"${name}_($suffix)"
-    val path = parent / actualName
+    var path = parent
+    if (suffix == 0) {
+      path = path / name
+    } else {
+      val i = name.lastIndexOf('.')
+      if (i > 0) {
+        val ext = name.substring(i)
+        val fileNoExt = name.substring(0, i)
+        val actualName = s"${fileNoExt}_($suffix)$ext"
+        path = path / actualName
+      } else {
+        path = path / name
+      }
+    }
 
     if (os.exists(path)) {
       getAvailablePath(parent, name, suffix + 1)
