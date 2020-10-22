@@ -60,6 +60,7 @@ object GenerateNativeReflectionConfig {
 //      "com.sun.org.apache.xerces.internal.impl.msg.SAXMessages"
     ).map(toConfigItem)
   }
+
   private def comDrewMetadataAdobe: List[String] = {
     val pack = "com.drew.metadata.adobe"
     val classes = """AdobeJpegDescriptor
