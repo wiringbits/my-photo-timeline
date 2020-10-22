@@ -50,12 +50,13 @@ class MetadataService(implicit logger: SimpleLogger) {
       dates.headOption
     }
 
-    val result = try f
-    catch {
-      case ex: Throwable =>
-        logger.debug(s"Failed to find metadata date from filename on $sourceFile", ex)
-        None
-    }
+    val result =
+      try f
+      catch {
+        case ex: Throwable =>
+          logger.debug(s"Failed to find metadata date from filename on $sourceFile", ex)
+          None
+      }
 
     result match {
       case Some(value) =>

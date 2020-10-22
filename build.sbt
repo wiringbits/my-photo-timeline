@@ -12,13 +12,12 @@ copyNativeImageConfigs := ((baseDirectory, target) map { (base, trg) =>
       .foreach(p => Files.createDirectories(p))
     new File(base, "META-INF/native-image")
       .listFiles()
-      .foreach(
-        file =>
-          Files.copy(
-            file.toPath,
-            new File(trg, s"native-image/META-INF/native-image/${file.getName}").toPath,
-            StandardCopyOption.REPLACE_EXISTING
-          )
+      .foreach(file =>
+        Files.copy(
+          file.toPath,
+          new File(trg, s"native-image/META-INF/native-image/${file.getName}").toPath,
+          StandardCopyOption.REPLACE_EXISTING
+        )
       )
   }
 }).value
