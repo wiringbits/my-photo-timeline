@@ -29,18 +29,17 @@ class FileOrganizerService(metadataService: MetadataService)(implicit logger: Si
     val input = if (os.exists(root)) os.walk(root).filter(os.isFile) else List.empty
     val total = input.size
     val (left, right) = input.zipWithIndex
-      .map {
-        case (sourceFile, index) =>
-          trackProgress(index, total)
+      .map { case (sourceFile, index) =>
+        trackProgress(index, total)
 
-          metadataService
-            .getCreationDate(sourceFile)
-            .map { createdOn =>
-              val hash = computeHash(sourceFile)
-              FileDetails(sourceFile, createdOn, hash)
-            }
-            .map(Right(_))
-            .getOrElse(Left(sourceFile))
+        metadataService
+          .getCreationDate(sourceFile)
+          .map { createdOn =>
+            val hash = computeHash(sourceFile)
+            FileDetails(sourceFile, createdOn, hash)
+          }
+          .map(Right(_))
+          .getOrElse(Left(sourceFile))
       }
       .partition(_.isLeft)
 
@@ -69,7 +68,7 @@ class FileOrganizerService(metadataService: MetadataService)(implicit logger: Si
   private def getAvailablePath(parent: os.Path, baseName: String, ext: String, suffix: Int = 0): os.Path = {
     val actualName = if (suffix == 0) s"${baseName}.${ext}" else s"${baseName}_($suffix).${ext}"
     val path = parent / actualName
-    
+
     if (os.exists(path)) {
       getAvailablePath(parent, baseName, ext, suffix + 1)
     } else {

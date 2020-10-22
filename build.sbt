@@ -12,13 +12,12 @@ copyNativeImageConfigs := ((baseDirectory, target) map { (base, trg) =>
       .foreach(p => Files.createDirectories(p))
     new File(base, "META-INF/native-image")
       .listFiles()
-      .foreach(
-        file =>
-          Files.copy(
-            file.toPath,
-            new File(trg, s"native-image/META-INF/native-image/${file.getName}").toPath,
-            StandardCopyOption.REPLACE_EXISTING
-          )
+      .foreach(file =>
+        Files.copy(
+          file.toPath,
+          new File(trg, s"native-image/META-INF/native-image/${file.getName}").toPath,
+          StandardCopyOption.REPLACE_EXISTING
+        )
       )
   }
 }).value
@@ -35,10 +34,10 @@ lazy val root = (project in file("."))
     buildInfoUsePackageAsPath := true,
     libraryDependencies ++= Seq(
       "com.lihaoyi" %% "os-lib" % "0.7.1",
-      "com.lihaoyi" %% "fansi" % "0.2.7",
+      "com.lihaoyi" %% "fansi" % "0.2.9",
       "com.google.guava" % "guava" % "28.0-jre",
       "com.drewnoakes" % "metadata-extractor" % "2.15.0",
-      "com.monovore" %% "decline" % "1.0.0"
+      "com.monovore" %% "decline" % "1.3.0"
     ),
     Compile / mainClass := Some("net.wiringbits.myphototimeline.Main"),
     nativeImageOptions ++= List(

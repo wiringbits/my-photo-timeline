@@ -1,6 +1,7 @@
 package net.wiringbits.myphototimeline
 
 object FileOrganizerTask {
+
   case class Arguments(inputRoot: os.Path, outputBaseRoot: os.Path, dryRun: Boolean, debug: Boolean) {
     val outputRoot: os.Path = outputBaseRoot / "organized"
     val duplicatedRoot: os.Path = outputBaseRoot / "duplicated"
@@ -43,9 +44,8 @@ class FileOrganizerTask(fileOrganizerService: FileOrganizerService)(implicit log
     }
 
     logger.info(s"Indexing now... it may take some minutes, be patient")
-    val allFiles = filesToProcess.data.keys.foldLeft(processedFiles) {
-      case (acc, currentHash) =>
-        acc + filesToProcess.data.getOrElse(currentHash, List.empty)
+    val allFiles = filesToProcess.data.keys.foldLeft(processedFiles) { case (acc, currentHash) =>
+      acc + filesToProcess.data.getOrElse(currentHash, List.empty)
     }
 
     val (newDuplicated, newUnique) =
@@ -75,29 +75,26 @@ class FileOrganizerTask(fileOrganizerService: FileOrganizerService)(implicit log
     } else {
       // Move duplicated files
       logger.info(s"Moving duplicated files to: ${args.duplicatedRoot}")
-      newDuplicated.zipWithIndex.foreach {
-        case (file, index) =>
-          trackProgress(current = index, total = newDuplicated.size)
-          fileOrganizerService.safeMove(destinationDirectory = args.duplicatedRoot, sourceFile = file.source)
+      newDuplicated.zipWithIndex.foreach { case (file, index) =>
+        trackProgress(current = index, total = newDuplicated.size)
+        fileOrganizerService.safeMove(destinationDirectory = args.duplicatedRoot, sourceFile = file.source)
       }
 
       // Move files without metadata
       logger.info(s"Moving invalid files to: ${args.invalidRoot}")
-      invalidFilesToProcess.zipWithIndex.foreach {
-        case (file, index) =>
-          trackProgress(current = index, total = invalidFilesToProcess.size)
-          fileOrganizerService.safeMove(destinationDirectory = args.invalidRoot, sourceFile = file)
+      invalidFilesToProcess.zipWithIndex.foreach { case (file, index) =>
+        trackProgress(current = index, total = invalidFilesToProcess.size)
+        fileOrganizerService.safeMove(destinationDirectory = args.invalidRoot, sourceFile = file)
       }
 
       logger.info(s"Organizing unique files to: ${args.outputRoot}")
-      newUnique.zipWithIndex.foreach {
-        case (file, index) =>
-          trackProgress(current = index, total = newDuplicated.size)
-          fileOrganizerService.organizeByDate(
-            destinationDirectory = args.outputRoot,
-            sourceFile = file.source,
-            createdOn = file.createdOn
-          )
+      newUnique.zipWithIndex.foreach { case (file, index) =>
+        trackProgress(current = index, total = newDuplicated.size)
+        fileOrganizerService.organizeByDate(
+          destinationDirectory = args.outputRoot,
+          sourceFile = file.source,
+          createdOn = file.createdOn
+        )
       }
 
       logger.info("Cleaning up empty directories")
