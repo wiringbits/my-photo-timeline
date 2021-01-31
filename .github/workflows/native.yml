@@ -25,7 +25,7 @@ jobs:
             local_path: target\native-image\my-photo-timeline.exe
     steps:
       - uses: actions/checkout@v2
-      - uses: olafurpg/setup-scala@v6
+      - uses: olafurpg/setup-scala@v10
       - run: git fetch --tags || true
       - run: sbt nativeImage
         shell: bash
@@ -43,7 +43,7 @@ jobs:
           name: ${{ matrix.uploaded_filename }}
       - name: Upload release
         if: github.event_name == 'release'
-        uses: actions/upload-release-asset@v1.0.1
+        uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
