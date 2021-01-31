@@ -34,7 +34,7 @@ lazy val root = (project in file("."))
     buildInfoUsePackageAsPath := true,
     libraryDependencies ++= Seq(
       "com.lihaoyi" %% "os-lib" % "0.7.2",
-      "com.lihaoyi" %% "fansi" % "0.2.9",
+      "com.lihaoyi" %% "fansi" % "0.2.10",
       "com.google.guava" % "guava" % "28.0-jre",
       "com.drewnoakes" % "metadata-extractor" % "2.15.0",
       "com.monovore" %% "decline" % "1.3.0"
