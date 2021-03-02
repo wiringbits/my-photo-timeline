@@ -37,7 +37,7 @@ lazy val root = (project in file("."))
       "com.lihaoyi" %% "fansi" % "0.2.10",
       "com.google.guava" % "guava" % "28.0-jre",
       "com.drewnoakes" % "metadata-extractor" % "2.15.0",
-      "com.monovore" %% "decline" % "1.3.0"
+      "com.monovore" %% "decline" % "1.4.0"
     ),
     Compile / mainClass := Some("net.wiringbits.myphototimeline.Main"),
     nativeImageOptions ++= List(
