@@ -33,7 +33,7 @@ lazy val root = (project in file("."))
     buildInfoPackage := "net.wiringbits.myphototimeline",
     buildInfoUsePackageAsPath := true,
     libraryDependencies ++= Seq(
-      "com.lihaoyi" %% "os-lib" % "0.7.3",
+      "com.lihaoyi" %% "os-lib" % "0.7.4",
       "com.lihaoyi" %% "fansi" % "0.2.12",
       "com.google.guava" % "guava" % "28.0-jre",
       "com.drewnoakes" % "metadata-extractor" % "2.15.0",
