@@ -27,7 +27,7 @@ lazy val root = (project in file("."))
   .settings(
     name := """my-photo-timeline""",
     organization := "net.wiringbits",
-    scalaVersion := "2.13.3",
+    scalaVersion := "2.13.6",
     fork in Test := true,
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, git.baseVersion, git.gitHeadCommit),
     buildInfoPackage := "net.wiringbits.myphototimeline",
