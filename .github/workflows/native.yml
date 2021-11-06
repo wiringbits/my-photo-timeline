@@ -27,12 +27,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: olafurpg/setup-scala@v10
       - run: git fetch --tags || true
+      - run: sbt test
       - run: sbt nativeImage
         shell: bash
         if: ${{ matrix.os != 'windows-latest' }}
       - run: echo $(pwd)
         shell: bash
-      - name: sbt test
+      - name: sbt nativeImage for Windows
         shell: cmd
         if: ${{ matrix.os == 'windows-latest' }}
         run: >-
