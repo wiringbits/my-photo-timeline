@@ -36,7 +36,7 @@ lazy val root = (project in file("."))
       "com.lihaoyi" %% "os-lib" % "0.8.1",
       "com.lihaoyi" %% "fansi" % "0.3.1",
       "com.google.guava" % "guava" % "28.0-jre",
-      "com.drewnoakes" % "metadata-extractor" % "2.16.0",
+      "com.drewnoakes" % "metadata-extractor" % "2.18.0",
       "com.monovore" %% "decline" % "2.2.0",
       "org.scalatest" %% "scalatest" % "3.2.11" % Test
     ),
