@@ -37,7 +37,7 @@ lazy val root = (project in file("."))
       "com.lihaoyi" %% "fansi" % "0.3.1",
       "com.google.guava" % "guava" % "28.0-jre",
       "com.drewnoakes" % "metadata-extractor" % "2.16.0",
-      "com.monovore" %% "decline" % "2.2.0",
+      "com.monovore" %% "decline" % "2.3.1",
       "org.scalatest" %% "scalatest" % "3.2.11" % Test
     ),
     Compile / mainClass := Some("net.wiringbits.myphototimeline.Main"),
