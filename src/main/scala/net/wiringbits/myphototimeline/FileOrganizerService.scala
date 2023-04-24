@@ -56,7 +56,6 @@ class FileOrganizerService(metadataService: MetadataService)(implicit logger: Si
     val parent = destinationDirectory / year / month
     val destinationFile = getAvailablePath(parent, sourceFile.baseName, sourceFile.ext)
     os.move(sourceFile, destinationFile, replaceExisting = false, createFolders = true)
-    destinationFile.toIO.setLastModified(createdOn.toEpochDay)
   }
 
   def safeMove(destinationDirectory: os.Path, sourceFile: os.Path): Unit = {
